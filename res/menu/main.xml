@@ -1,0 +1,19 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.ken.ebook.ActivityMain" >
+
+ <item
+        android:id="@+id/action_search"
+        android:actionViewClass="android.widget.SearchView"
+        android:icon="@drawable/action_search_white"
+        android:showAsAction="always"
+        android:title="Search"/>
+    <item
+        android:id="@+id/action_add_book"
+        android:orderInCategory="100"
+        android:icon="@drawable/ic_action_book_add"
+        android:showAsAction="always"
+        android:title="@string/action_add_book"/>
+
+
+</menu>

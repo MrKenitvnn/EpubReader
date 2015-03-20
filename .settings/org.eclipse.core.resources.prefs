@@ -1,0 +1,6 @@
+eclipse.preferences.version=1
+encoding//src/com/ken/ebook/activity/ActivityMain.java=UTF-8
+encoding//src/com/ken/ebook/adapter/FragmentBooks_ListAdapter.java=UTF-8
+encoding//src/com/ken/ebook/fragment/FragmentBooks.java=UTF-8
+encoding//src/com/ken/ebook/process/EpubBookHandler.java=UTF-8
+encoding//src/com/ken/ebook/process/FileHandler.java=UTF-8
