@@ -4,6 +4,7 @@ import java.io.File;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -61,12 +62,20 @@ public class FragmentBooks_GridView extends Fragment implements
 
 	// event click
 	@Override
-	public void onItemClick(AdapterView<?> parent, View view, int position,
-			long id) {
-		Intent intent = new Intent(FragmentBooks.context, ActivityReading.class);
-		intent.putExtra("BOOK", FragmentBooks.listEpubBook.get(position));
-
-		startActivity(intent);
+	public void onItemClick(AdapterView<?> parent, View view,
+			final int position, long id) {
+		final ProgressDialog progressDialog;
+		progressDialog = ProgressDialog.show(getActivity(), "", "Loading..");
+		new Thread() {
+			public void run() {
+				EpubBook book = FragmentBooks.listEpubBook.get(position);
+				Intent intent = new Intent(FragmentBooks.context,
+						ActivityReading.class);
+				intent.putExtra("BOOK", book);
+				startActivity(intent);
+				progressDialog.dismiss();
+			}
+		}.start();
 	}// end-func onItemClick
 
 	@Override
@@ -92,19 +101,7 @@ public class FragmentBooks_GridView extends Fragment implements
 			@SuppressLint("NewApi")
 			@Override
 			public void onClick(DialogInterface dialogInterface, int i) {
-				EpubBook book = (EpubBook) adapter.getItem(position);
-//
-//				if (FragmentBooks.bookDAO.delEpubBook(Integer.parseInt(book
-//						.getEpubFolder())) > 0) {
-//					FileHandler.deleteBookFolder(new File(FileHandler.rootPath
-//							+ book.getEpubFolder()));
-//					adapter.eventDelABook(position);
-//					view.setAlpha(1);
-//				} else {
-//					Log.d("delete epub book",
-//							"failed FragmentBooks_ListView line 121");
-//				}
-
+				// EpubBook book = (EpubBook) adapter.getItem(position);
 				view.animate().alpha(0).setDuration(400)
 						.withEndAction(new Runnable() {
 							@Override
@@ -114,6 +111,11 @@ public class FragmentBooks_GridView extends Fragment implements
 
 								if (FragmentBooks.bookDAO.delEpubBook(Integer
 										.parseInt(book.getEpubFolder())) > 0) {
+									FragmentBooks.favoriteDao
+											.delEpubFavorite(Integer
+													.parseInt(book
+															.getEpubFolder()));
+
 									FileHandler.deleteBookFolder(new File(
 											FileHandler.rootPath
 													+ book.getEpubFolder()));

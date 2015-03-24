@@ -25,7 +25,6 @@
     <string-array name="nav_drawer_items">
         <item >Books</item>
         <item >Favorites</item>
-        <item >Contact</item>
         <item >About</item>
     </string-array>
     
@@ -34,7 +33,6 @@
     <array name="nav_drawer_icons">
         <item>@drawable/ic_home</item>
         <item>@drawable/ic_people</item>
-        <item>@drawable/ic_communities</item>
         <item>@drawable/ic_whats_hot</item>
     </array>
     

@@ -6,6 +6,7 @@ import java.util.List;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,6 +14,8 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -72,25 +75,36 @@ public class FragmentFavorites extends Fragment implements
 		lvFavorites.setOnItemClickListener(this);
 		lvFavorites.setOnItemLongClickListener(this);
 
+		setHasOptionsMenu(true);
 		return rootView;
 	}
 
 	@Override
-	public void onItemClick(AdapterView<?> parent, View view, int position,
-			long id) {
-
-		Intent intent = new Intent(context, ActivityReading.class);
-		intent.putExtra("BOOK", listEpubBook.get(position));
-
-		startActivity(intent);
-
+	public void onItemClick(AdapterView<?> parent, View view,
+			final int position, long id) {
+		final ProgressDialog progressDialog;
+		progressDialog = ProgressDialog.show(getActivity(), "", "Loading..");
+		new Thread() {
+			public void run() {
+				Intent intent = new Intent(context, ActivityReading.class);
+				intent.putExtra("BOOK", listEpubBook.get(position));
+				startActivity(intent);
+				progressDialog.dismiss();
+			}
+		}.start();
 	}// end-func onItemClick
 
 	@Override
 	public boolean onItemLongClick(AdapterView<?> parent, final View view,
 			final int position, long id) {
-		
+
 		return true;
 	}// end-func onItemLongClick
+
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		menu.findItem(R.id.action_add_book).setVisible(false);
+		super.onCreateOptionsMenu(menu, inflater);
+
+	}
 
 }

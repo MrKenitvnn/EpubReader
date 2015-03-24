@@ -3,15 +3,19 @@ package com.ken.ebook.model;
 public class EpubBookmark {
 	private int epubBook_id;
 	private String componentId;
-	private float percent;
+	private String percent;
 
-	public EpubBookmark(int epubBook_id, String componentId, float percent) {
+	public EpubBookmark() {
+	};
+
+	public EpubBookmark(int epubBook_id, String componentId, String percent) {
 		super();
 		this.epubBook_id = epubBook_id;
 		this.componentId = componentId;
 		this.percent = percent;
-	}
+	}// end-constructor
 
+	// getter & setter
 	public int getEpubBook_id() {
 		return epubBook_id;
 	}
@@ -30,11 +34,11 @@ public class EpubBookmark {
 		return this;
 	}
 
-	public float getPercent() {
+	public String getPercent() {
 		return percent;
 	}
 
-	public EpubBookmark setPercent(float percent) {
+	public EpubBookmark setPercent(String percent) {
 		this.percent = percent;
 		return this;
 	}

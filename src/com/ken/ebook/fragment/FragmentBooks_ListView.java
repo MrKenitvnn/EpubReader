@@ -4,6 +4,7 @@ import java.io.File;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -30,6 +31,7 @@ public class FragmentBooks_ListView extends Fragment implements
 	static final int ANIMATION_DURATION = 400;
 	ListView lvEpubBook;
 	public static FragmentBooks_ListAdapter adapter;
+	public static ProgressDialog pd;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -59,20 +61,36 @@ public class FragmentBooks_ListView extends Fragment implements
 		super.onActivityCreated(savedInstanceState);
 
 		adapter.filter(ActivityMain.textSearch);
-		// setupSearchView();
 	}// end-func onActivityCreated
 
 	// event click
 	@Override
-	public void onItemClick(AdapterView<?> parent, View view, int position,
-			long id) {
+	public void onItemClick(AdapterView<?> parent, View view,
+			final int position, long id) {
+		//
+		// EpubBook book = FragmentBooks.listEpubBook.get(position);
+		// Intent intent = new Intent(getActivity(), ActivityReading.class);
+		// intent.putExtra("BOOK", book);
+		// startActivity(intent);
 
-		Intent intent = new Intent(FragmentBooks.context, ActivityReading.class);
-		intent.putExtra("BOOK", FragmentBooks.listEpubBook.get(position));
+		final ProgressDialog progressDialog;
 
-		startActivity(intent);
+		progressDialog = ProgressDialog.show(getActivity(), "", "Loading..");
 
-	}// end-func onItemClick
+		new Thread() {
+			public void run() {
+				EpubBook book = FragmentBooks.listEpubBook.get(position);
+				Intent intent = new Intent(getActivity(), ActivityReading.class);
+				intent.putExtra("BOOK", book);
+				startActivity(intent);
+
+				progressDialog.dismiss();
+			}
+		}.start();
+
+	};
+
+	// end-func onItemClick
 
 	@Override
 	public boolean onItemLongClick(AdapterView<?> parent, final View view,
@@ -104,14 +122,17 @@ public class FragmentBooks_ListView extends Fragment implements
 										.getItem(position);
 								if (FragmentBooks.bookDAO.delEpubBook(Integer
 										.parseInt(book.getEpubFolder())) > 0) {
+									FragmentBooks.favoriteDao
+											.delEpubFavorite(Integer
+													.parseInt(book
+															.getEpubFolder()));
 									FileHandler.deleteBookFolder(new File(
 											FileHandler.rootPath
 													+ book.getEpubFolder()));
 									adapter.eventDelABook(position);
-									view.setAlpha(1);
 								} else {
-									Log.d("delete epub book","failed FragmentBooks_ListView line 121");
-									view.setAlpha(0);
+									Log.d("delete epub book",
+											"failed FragmentBooks_ListView line 117");
 								}
 							}
 						});

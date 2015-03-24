@@ -2,6 +2,7 @@ package com.ken.ebook.activity;
 
 import java.util.ArrayList;
 
+
 import android.app.ActionBar;
 import android.app.SearchManager;
 import android.content.Context;
@@ -34,7 +35,6 @@ import com.ken.ebook.fragment.FragmentAbout;
 import com.ken.ebook.fragment.FragmentBooks;
 import com.ken.ebook.fragment.FragmentBooks_GridView;
 import com.ken.ebook.fragment.FragmentBooks_ListView;
-import com.ken.ebook.fragment.FragmentContact;
 import com.ken.ebook.fragment.FragmentFavorites;
 import com.ken.ebook.model.EpubBook;
 import com.ken.ebook.model.NavDrawerItem;
@@ -77,7 +77,7 @@ public class ActivityMain extends FragmentActivity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		// actionbar color
 		ActionBar bar = getActionBar();
-		bar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#4DB2EC")));
+		bar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#0A80FF")));
 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
@@ -104,12 +104,9 @@ public class ActivityMain extends FragmentActivity implements
 		// Find People
 		navDrawerItems.add(new NavDrawerItem(navMenuTitles[1], navMenuIcons
 				.getResourceId(1, -1)));
-		// Communities, Will add a counter here
+		// What's hot, We will add a counter here
 		navDrawerItems.add(new NavDrawerItem(navMenuTitles[2], navMenuIcons
 				.getResourceId(2, -1)));
-		// What's hot, We will add a counter here
-		navDrawerItems.add(new NavDrawerItem(navMenuTitles[3], navMenuIcons
-				.getResourceId(3, -1)));
 
 		// Recycle the typed array
 		navMenuIcons.recycle();
@@ -169,6 +166,7 @@ public class ActivityMain extends FragmentActivity implements
 
 		mSearchView = (SearchView) menu.findItem(R.id.action_search)
 				.getActionView();
+
 		setupSearchView();
 		return true;
 	}// end-func onCreateOptionMenu
@@ -191,7 +189,8 @@ public class ActivityMain extends FragmentActivity implements
 	}// end-fund onOptionsItemSelected
 
 	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+	public void onActivityResult(int requestCode, int resultCode,
+			final Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		switch (resultCode) {
 		case FragmentBooks.RESULT_CODE_OK:// xử lý khi xác nhận đã click vào
@@ -212,7 +211,6 @@ public class ActivityMain extends FragmentActivity implements
 						"Đã thêm: " + newBook.getEpubBookName(),
 						Toast.LENGTH_SHORT).show();
 			}
-
 			break;
 		case FragmentBooks.RESULT_CODE_CANCEL:
 			FragmentBooks.pathFileEpub = "";
@@ -230,7 +228,10 @@ public class ActivityMain extends FragmentActivity implements
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		// if nav drawer is opened, hide the action items
 		boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
-		menu.findItem(R.id.action_add_book).setVisible(!drawerOpen);
+
+		// menu.findItem(R.id.action_add_book).setVisible(!drawerOpen);
+		// menu.findItem(R.id.action_search).setVisible(!drawerOpen);
+
 		return super.onPrepareOptionsMenu(menu);
 	}// end-func onPrepareOptionsMenu
 
@@ -252,11 +253,6 @@ public class ActivityMain extends FragmentActivity implements
 			fragment = new FragmentFavorites(this);
 			break;
 		case 2:
-			FRAGMENT_STATE = FRAGMENT_STATE_CONTACT;
-			setNoneFilter();
-			fragment = new FragmentContact();
-			break;
-		case 3:
 			FRAGMENT_STATE = FRAGMENT_STATE_ABOUT;
 			setNoneFilter();
 			fragment = new FragmentAbout();
@@ -377,34 +373,6 @@ public class ActivityMain extends FragmentActivity implements
 		return false;
 	}
 
-	// public boolean onClose() {
-	// Fragment fmBooks_content = getSupportFragmentManager()
-	// .findFragmentById(R.id.fm_content);
-	// switch (FRAGMENT_STATE) {
-	// case FRAGMENT_STATE_BOOKS:
-	// if (fmBooks_content instanceof FragmentBooks_ListView) {
-	// FragmentBooks_ListView.adapter.closeSearch();
-	// }// end-if
-	// if (fmBooks_content instanceof FragmentBooks_GridView) {
-	// FragmentBooks_GridView.adapter.closeSearch();
-	// }// end-if
-	//
-	// break;
-	// case FRAGMENT_STATE_FAVORITES:
-	//
-	// Toast.makeText(getApplicationContext(), "day la favorite",
-	// Toast.LENGTH_SHORT).show();
-	// break;
-	// case FRAGMENT_STATE_BOOKSTORE:
-	// break;
-	//
-	// default:
-	// break;
-	// }
-	//
-	// return false;
-	// }
-
 	// doan code chuyen man hinh
 	public void navigationToView(Fragment _fragment) {
 		FragmentManager manager = getSupportFragmentManager();
@@ -438,5 +406,6 @@ public class ActivityMain extends FragmentActivity implements
 			FileHandler.createRootFolder();
 			prefs.edit().putBoolean("firstrun", false).commit();
 		}
+
 	}
 }

@@ -9,43 +9,57 @@ import java.util.List;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.webkit.JavascriptInterface;
+import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
+import android.webkit.WebSettings.RenderPriority;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.ken.ebook.R;
 import com.ken.ebook.DAO.EpubBookDAO;
+import com.ken.ebook.DAO.EpubBookmarkDAO;
 import com.ken.ebook.DAO.EpubChapterDAO;
 import com.ken.ebook.DAO.EpubCssDAO;
 import com.ken.ebook.model.EpubBook;
+import com.ken.ebook.model.EpubBookmark;
 import com.ken.ebook.model.EpubChapter;
 import com.ken.ebook.model.EpubCss;
 import com.ken.ebook.process.FileHandler;
 import com.ken.ebook.process.JsoupParse;
 
-@SuppressLint({ "SetJavaScriptEnabled", "JavascriptInterface", "NewApi" })
+@SuppressLint({ "NewApi", "SetJavaScriptEnabled" })
 public class ActivityReading extends Activity {
-	int book_id;
+	public static int test = 0x0;
+	static int book_id;
 	String chapterSrc;
 	int state_show = 0x0;
+	String webData = "";
 
 	WebView webview;
 	Button btnBookmark;
 	Button btnShowControl;
 	RelativeLayout relHoldControl;
 	EpubBookDAO bookDAO;
-	EpubChapterDAO chapterDAO;
-	EpubCssDAO cssDAO;
-	List<EpubChapter> listChapter;
-	List<EpubCss> listCss;
+	EpubBookmarkDAO bookmarkDAO;
+	static EpubChapterDAO chapterDAO;
+	static EpubCssDAO cssDAO;
+	static List<EpubChapter> listChapter;
+	static List<EpubCss> listCss;
+	EpubBookmark mBookmark;
+	public static ProgressDialog pd;
 
+	@SuppressLint({ "JavascriptInterface", "NewApi", "SetJavaScriptEnabled" })
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -53,7 +67,9 @@ public class ActivityReading extends Activity {
 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_readding);
+
 		bookDAO = new EpubBookDAO(getApplicationContext());
+		bookmarkDAO = new EpubBookmarkDAO(getApplicationContext());
 		chapterDAO = new EpubChapterDAO(getApplicationContext());
 		cssDAO = new EpubCssDAO(getApplicationContext());
 
@@ -65,13 +81,7 @@ public class ActivityReading extends Activity {
 
 		// event click
 		btnShowControl.setOnClickListener(viewShowControl);
-		btnBookmark.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Toast.makeText(getApplicationContext(), "bookmarked", 5000)
-						.show();
-			}
-		});
+		btnBookmark.setOnClickListener(bookMark);
 
 		// Nhan du lieu tu ben ben kia truyen sang
 		EpubBook book = (EpubBook) getIntent().getExtras().getSerializable(
@@ -83,9 +93,11 @@ public class ActivityReading extends Activity {
 		listChapter.addAll(chapterDAO.getListChapterByBookId(book_id));
 		listCss = new ArrayList<EpubCss>();
 		listCss.addAll(cssDAO.getListCssByBookId(book_id));
+		mBookmark = bookmarkDAO.getEpubBookmarkById(book_id);
 
 		// đọc file script từ assets
 		String script = getAsset("finalebookscript.js");
+		String script2 = getAsset("finalebookscript2.js");
 
 		// book data
 		String bookData = "var bookData = {" + "getComponents: function () {"
@@ -126,7 +138,7 @@ public class ActivityReading extends Activity {
 		// end book data
 
 		// start - web data
-		String webData = "<!DOCTYPE html>"
+		webData = "<!DOCTYPE html>"
 				+ "<html>"
 				+ "<head>"
 				+ "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />"
@@ -148,9 +160,16 @@ public class ActivityReading extends Activity {
 				+ "<script type=\"text/javascript\" src=\"file:///android_asset/monocore.js\"></script>"
 				+ "<script type=\"text/javascript\" src=\"file:///android_asset/monoctrl.js\"></script>"
 				+ "<script>" // script start
-				+ bookData + script + "</script>" // end script
-				// +
-				// "<script type=\"text/javascript\" src=\"file:///android_asset/finalebookscript.js\"></script>"
+				+ bookData + script;
+
+		if (mBookmark != null) {
+			webData += " var locus = {componentId: '"
+					+ mBookmark.getComponentId() + "',percent: '"
+					+ mBookmark.getPercent() + "'};";
+			webData += " reader.moveTo(locus);";
+		}
+
+		webData += script2 + " </script>" // end script
 				+ "</head>";
 
 		webData += "" + "<body>" + "<div id=\"readerBg\">"
@@ -164,26 +183,83 @@ public class ActivityReading extends Activity {
 				+ "<div class=\"dummyPage\"></div>" + "</div>" + ""
 				+ "<div id=\"readerCntr\">"
 				+ "<div class=\"reader\" id=\"reader\"></div>" + "</div>";
-	
+
+		webData += "<script type=\"text/javascript\" src=\"file:///android_asset/finalebookscript.js\"></script>";
+
 		webData += "</body>" + "</html>";
 
-		// ghi vào file của folder data trong sdcard
-		FileHandler.writeData(webData, "index.html");
+	} // end-func onCreate
+
+	@SuppressWarnings("deprecation")
+	@Override
+	protected void onStart() {
+		// TODO Auto-generated method stub
+		super.onStart();
 
 		webview.getSettings().setJavaScriptEnabled(true);
 		webview.getSettings().setAllowFileAccessFromFileURLs(true);
-		webview.addJavascriptInterface(new JavaScriptHandler(this), "MyHandler");
+		webview.setWebViewClient(new WebViewClient());
+		webview.setWebChromeClient(new WebChromeClient());
+		webview.addJavascriptInterface(this, "android");
+		webview.getSettings().setUseWideViewPort(false);
+		webview.requestFocusFromTouch();
+		// these settings speed up page load into the webview
+		webview.getSettings().setRenderPriority(RenderPriority.HIGH);
+		webview.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
+		webview.requestFocus(View.FOCUS_DOWN);
+		// ghi vào file của folder data trong sdcard
+		FileHandler.writeData(webData, "index.html");
 
 		webview.loadUrl("file://" + FileHandler.rootPath
 				+ FileHandler.DATA_FOLDER + "/index.html");
+	}
 
-	} // end-func onCreate
+	@Override
+	protected void onResume() {
+		super.onResume();
+
+	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
-		Toast.makeText(getApplicationContext(), "on pause", 5000).show();
-	};
+		webview.loadUrl("javascript:getComponentId()");
+	} // end-func onPause
+
+	// get asset
+	public String getAsset(String file_name) {
+		// đọc file script từ assets
+		StringBuilder stbScript = new StringBuilder();
+		InputStream isScript;
+		try {
+			isScript = getAssets().open(file_name);
+			BufferedReader br = new BufferedReader(new InputStreamReader(
+					isScript, "UTF-8"));
+			String str;
+
+			while ((str = br.readLine()) != null) {
+				stbScript.append(str + "\n");
+			}
+			br.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return stbScript.toString();
+	}// end-func getAsset
+
+	@JavascriptInterface
+	public void setData(String componentId, String percentId) {
+		if (mBookmark != null) {
+			mBookmark.setComponentId(componentId).setPercent(percentId);
+			bookmarkDAO.editEpubBookmark(mBookmark);
+			Log.d("mylog edit", componentId + " - " + percentId);
+		} else {
+			mBookmark = new EpubBookmark(book_id, componentId, percentId);
+			bookmarkDAO.addEpubBookmark(mBookmark);
+			Log.d("mylog add", componentId + " - " + percentId);
+		}
+	}// end-func setData
 
 	// event
 	View.OnClickListener viewShowControl = new View.OnClickListener() {
@@ -213,35 +289,12 @@ public class ActivityReading extends Activity {
 		}
 	};
 
-	// get asset
-	public String getAsset(String file_name) {
-		// đọc file script từ assets
-		StringBuilder stbScript = new StringBuilder();
-		InputStream isScript;
-		try {
-			isScript = getAssets().open(file_name);
-			BufferedReader br = new BufferedReader(new InputStreamReader(
-					isScript, "UTF-8"));
-			String str;
-
-			while ((str = br.readLine()) != null) {
-				stbScript.append(str + "\n");
-			}
-			br.close();
-		} catch (IOException e) {
-			e.printStackTrace();
+	View.OnClickListener bookMark = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			webview.loadUrl("javascript:getComponentId()");
 		}
+	};
 
-		return stbScript.toString();
-	}// end-func getAsset
-
-	public class JavaScriptHandler {
-		ActivityReading parentActivity;
-
-		public JavaScriptHandler(ActivityReading activity) {
-			parentActivity = activity;
-		}
-
-	}// end-class JavaScriptHandler
-
+	// end-event
 }

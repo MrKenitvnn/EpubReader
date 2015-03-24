@@ -2,6 +2,7 @@ package com.ken.ebook.model;
 
 import java.io.Serializable;
 
+@SuppressWarnings("serial")
 public class EpubBook implements Serializable{
 	private int epubBook_id;
 	private String epubBookName;

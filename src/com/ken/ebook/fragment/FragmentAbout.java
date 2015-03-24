@@ -11,24 +11,27 @@ import android.view.ViewGroup;
 import com.ken.ebook.R;
 
 public class FragmentAbout extends Fragment {
-	
-	public FragmentAbout(){}
-	
-	
-	@Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
- 
-        View rootView = inflater.inflate(R.layout.fragment_whats_hot, container, false);
 
-	    // call the method setHasOptionsMenu, to have access to the menu from your fragment
-	    setHasOptionsMenu(true);
-        return rootView;
-    }
-	
+	public FragmentAbout() {
+	}
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+
+		View rootView = inflater.inflate(R.layout.fragment_whats_hot,
+				container, false);
+
+		// call the method setHasOptionsMenu, to have access to the menu from
+		// your fragment
+		setHasOptionsMenu(true);
+		return rootView;
+	}
+
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-	    menu.findItem(R.id.action_search).setVisible(false);
-	    super.onCreateOptionsMenu(menu, inflater);
-	    
+		menu.findItem(R.id.action_search).setVisible(false);
+		menu.findItem(R.id.action_add_book).setVisible(false);
+		super.onCreateOptionsMenu(menu, inflater);
+
 	}
 }

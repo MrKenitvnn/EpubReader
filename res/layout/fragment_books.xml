@@ -23,7 +23,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:alpha="0.9"
-        android:background="#16bbeb"
+        android:background="#44F7D2"
         android:gravity="center_vertical"
         android:orientation="horizontal" >
 
