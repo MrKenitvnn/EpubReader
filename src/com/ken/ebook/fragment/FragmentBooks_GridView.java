@@ -64,18 +64,17 @@ public class FragmentBooks_GridView extends Fragment implements
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view,
 			final int position, long id) {
-		final ProgressDialog progressDialog;
-		progressDialog = ProgressDialog.show(getActivity(), "", "Loading..");
-		new Thread() {
-			public void run() {
-				EpubBook book = FragmentBooks.listEpubBook.get(position);
-				Intent intent = new Intent(FragmentBooks.context,
-						ActivityReading.class);
-				intent.putExtra("BOOK", book);
-				startActivity(intent);
-				progressDialog.dismiss();
-			}
-		}.start();
+		// final ProgressDialog progressDialog;
+		// progressDialog = ProgressDialog.show(getActivity(), "", "Loading..");
+		// new Thread() {
+		// public void run() {
+		EpubBook book = FragmentBooks.listEpubBook.get(position);
+		Intent intent = new Intent(FragmentBooks.context, ActivityReading.class);
+		intent.putExtra("BOOK", book);
+		startActivity(intent);
+		// progressDialog.dismiss();
+		// }
+		// }.start();
 	}// end-func onItemClick
 
 	@Override

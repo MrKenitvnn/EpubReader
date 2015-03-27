@@ -35,8 +35,20 @@ public class FragmentBooks_ListAdapter extends BaseAdapter {
 	private static List<EpubBook> mLocations;
 	private ArrayList<EpubBook> arraylist;
 	private LayoutInflater mInflater;
+	
+	/**
+	 * @return the mLocations
+	 */
+	public static List<EpubBook> getmLocations() {
+		return mLocations;
+	}
 
-	// boolean[] itemChecked;
+	/**
+	 * @param mLocations the mLocations to set
+	 */
+	public static void setmLocations(List<EpubBook> mLocations) {
+		FragmentBooks_ListAdapter.mLocations = mLocations;
+	}
 
 	// constructor
 	public FragmentBooks_ListAdapter(Context context, List<EpubBook> locations) {

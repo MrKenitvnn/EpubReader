@@ -25,9 +25,24 @@ public class FragmentBooks_GridAdapter extends BaseAdapter {
 		public TextView tvEpubBookName;
 	}
 
-	private List<EpubBook> mLocations;
+	private static List<EpubBook> mLocations;
 	private ArrayList<EpubBook> arraylist;
 	private LayoutInflater mInflater;
+
+	/**
+	 * @return the mLocations
+	 */
+	public static List<EpubBook> getmLocations() {
+		return mLocations;
+	}
+
+	/**
+	 * @param mLocations
+	 *            the mLocations to set
+	 */
+	public static void setmLocations(List<EpubBook> mLocations) {
+		FragmentBooks_GridAdapter.mLocations = mLocations;
+	}
 
 	public FragmentBooks_GridAdapter(Context context, List<EpubBook> locations) {
 		mInflater = (LayoutInflater) context
@@ -114,11 +129,12 @@ public class FragmentBooks_GridAdapter extends BaseAdapter {
 			notifyDataSetChanged();
 		}
 	}
+
 	// event del a book
-		public void eventDelABook(int id) {
-				mLocations.remove(id);
-				notifyDataSetChanged();
-		}
+	public void eventDelABook(int id) {
+		mLocations.remove(id);
+		notifyDataSetChanged();
+	}
 
 	// Filter
 	public void filter(String charText) {

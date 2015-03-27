@@ -7,6 +7,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -67,26 +68,10 @@ public class FragmentBooks_ListView extends Fragment implements
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view,
 			final int position, long id) {
-		//
-		// EpubBook book = FragmentBooks.listEpubBook.get(position);
-		// Intent intent = new Intent(getActivity(), ActivityReading.class);
-		// intent.putExtra("BOOK", book);
-		// startActivity(intent);
-
-		final ProgressDialog progressDialog;
-
-		progressDialog = ProgressDialog.show(getActivity(), "", "Loading..");
-
-		new Thread() {
-			public void run() {
-				EpubBook book = FragmentBooks.listEpubBook.get(position);
-				Intent intent = new Intent(getActivity(), ActivityReading.class);
-				intent.putExtra("BOOK", book);
-				startActivity(intent);
-
-				progressDialog.dismiss();
-			}
-		}.start();
+		EpubBook book = FragmentBooks.listEpubBook.get(position);
+		Intent intent = new Intent(getActivity(), ActivityReading.class);
+		intent.putExtra("BOOK", book);
+		startActivity(intent);
 
 	};
 
@@ -150,4 +135,14 @@ public class FragmentBooks_ListView extends Fragment implements
 		EpubBookDAO.close();
 	}
 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }

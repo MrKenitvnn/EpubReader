@@ -68,11 +68,7 @@ public class EpubBookHandler {
 							newBook.getEpubFilePath())));
 
 				} else { // nếu có trong CSDL thì xóa thư mục
-					// thông báo
-					Toast.makeText(FragmentBooks.context,
-							newBook.getEpubBookName() + " đã có",
-							Toast.LENGTH_LONG).show();
-					// và xóa luôn thư mục
+
 					FileHandler.deleteBookFolder(new File(FileHandler.rootPath
 							+ bookFolder));
 					newBook = null;

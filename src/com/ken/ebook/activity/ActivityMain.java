@@ -2,8 +2,8 @@ package com.ken.ebook.activity;
 
 import java.util.ArrayList;
 
-
-import android.app.ActionBar;
+import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +12,7 @@ import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
@@ -26,7 +27,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SearchView;
-import android.widget.Toast;
 
 import com.ken.ebook.R;
 import com.ken.ebook.DAO.Database;
@@ -41,6 +41,7 @@ import com.ken.ebook.model.NavDrawerItem;
 import com.ken.ebook.process.EpubBookHandler;
 import com.ken.ebook.process.FileHandler;
 
+@SuppressLint("NewApi")
 public class ActivityMain extends FragmentActivity implements
 		SearchView.OnQueryTextListener {
 	Database db;
@@ -76,7 +77,7 @@ public class ActivityMain extends FragmentActivity implements
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// actionbar color
-		ActionBar bar = getActionBar();
+		android.app.ActionBar bar = getActionBar();
 		bar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#0A80FF")));
 
 		super.onCreate(savedInstanceState);
@@ -195,22 +196,9 @@ public class ActivityMain extends FragmentActivity implements
 		switch (resultCode) {
 		case FragmentBooks.RESULT_CODE_OK:// xử lý khi xác nhận đã click vào
 											// file
-			FragmentBooks.pathFileEpub = data.getStringExtra("path");
 
-			EpubBook newBook = EpubBookHandler
-					.addNewEpubBook(FragmentBooks.pathFileEpub);
+			new AddBookTask().execute(data.getStringExtra("path"));
 
-			Fragment fmBooks_content = getSupportFragmentManager()
-					.findFragmentById(R.id.fm_content);
-			if (fmBooks_content instanceof FragmentBooks_ListView) {
-				FragmentBooks_ListView.adapter.eventAddNewBook(newBook);
-			} else if (fmBooks_content instanceof FragmentBooks_GridView) {
-				FragmentBooks_GridView.adapter.eventAddNewBook(newBook);
-			} else {
-				Toast.makeText(getApplicationContext(),
-						"Đã thêm: " + newBook.getEpubBookName(),
-						Toast.LENGTH_SHORT).show();
-			}
 			break;
 		case FragmentBooks.RESULT_CODE_CANCEL:
 			FragmentBooks.pathFileEpub = "";
@@ -227,7 +215,7 @@ public class ActivityMain extends FragmentActivity implements
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		// if nav drawer is opened, hide the action items
-		boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
+		// boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
 
 		// menu.findItem(R.id.action_add_book).setVisible(!drawerOpen);
 		// menu.findItem(R.id.action_search).setVisible(!drawerOpen);
@@ -408,4 +396,53 @@ public class ActivityMain extends FragmentActivity implements
 		}
 
 	}
+
+	private class AddBookTask extends AsyncTask<String, Long, EpubBook> {
+		private final ProgressDialog dialog = new ProgressDialog(
+				ActivityMain.this);
+
+		EpubBook newBook;
+
+		// can use UI thread here
+		protected void onPreExecute() {
+			dialog.setMessage("Adding..");
+			this.dialog.show();
+		}
+
+		// automatically done on worker thread (separate from UI thread)
+		protected EpubBook doInBackground(final String... args) {
+			try {
+				// FragmentBooks.pathFileEpub = data.getStringExtra("path");
+				FragmentBooks.pathFileEpub = args[0];
+
+				newBook = EpubBookHandler
+						.addNewEpubBook(FragmentBooks.pathFileEpub);
+
+			} catch (Exception e) {
+				Log.v("job being done", e.getMessage());
+			}
+			return newBook;
+		}
+
+		// periodic updates - it is OK to change UI
+		@Override
+		protected void onProgressUpdate(Long... value) {
+			super.onProgressUpdate(value);
+		}
+
+		// can use UI thread here
+		protected void onPostExecute(final EpubBook newBook) {
+
+			Fragment fmBooks_content = getSupportFragmentManager()
+					.findFragmentById(R.id.fm_content);
+			if (fmBooks_content instanceof FragmentBooks_ListView) {
+				FragmentBooks_ListView.adapter.eventAddNewBook(newBook);
+			} else if (fmBooks_content instanceof FragmentBooks_GridView) {
+				FragmentBooks_GridView.adapter.eventAddNewBook(newBook);
+			}
+			if (this.dialog.isShowing()) {
+				this.dialog.dismiss();
+			}
+		}
+	}// AddBookTask
 }
