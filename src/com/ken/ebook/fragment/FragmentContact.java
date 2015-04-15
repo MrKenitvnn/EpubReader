@@ -22,8 +22,6 @@ public class FragmentContact extends Fragment {
 		View rootView = inflater.inflate(R.layout.fragment_community,
 				container, false);
 
-		// call the method setHasOptionsMenu, to have access to the menu from
-		// your fragment
 		setHasOptionsMenu(true);
 		return rootView;
 	}

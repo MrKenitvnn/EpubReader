@@ -4,7 +4,6 @@ import java.io.File;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -24,7 +23,7 @@ import com.ken.ebook.activity.ActivityMain;
 import com.ken.ebook.activity.ActivityReading;
 import com.ken.ebook.adapter.FragmentBooks_GridAdapter;
 import com.ken.ebook.model.EpubBook;
-import com.ken.ebook.process.FileHandler;
+import com.ken.ebook.utils.FileHandler;
 
 public class FragmentBooks_GridView extends Fragment implements
 		OnItemClickListener, OnItemLongClickListener {
@@ -43,7 +42,7 @@ public class FragmentBooks_GridView extends Fragment implements
 		gvEpubBook = (GridView) rootView.findViewById(R.id.gvEpubBook);
 
 		adapter = new FragmentBooks_GridAdapter(getActivity(),
-				FragmentBooks.listEpubBook);
+												FragmentBooks.listEpubBook);
 
 		gvEpubBook.setAdapter(adapter);
 		gvEpubBook.setTextFilterEnabled(true);
@@ -64,17 +63,11 @@ public class FragmentBooks_GridView extends Fragment implements
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view,
 			final int position, long id) {
-		// final ProgressDialog progressDialog;
-		// progressDialog = ProgressDialog.show(getActivity(), "", "Loading..");
-		// new Thread() {
-		// public void run() {
+
 		EpubBook book = FragmentBooks.listEpubBook.get(position);
 		Intent intent = new Intent(FragmentBooks.context, ActivityReading.class);
 		intent.putExtra("BOOK", book);
 		startActivity(intent);
-		// progressDialog.dismiss();
-		// }
-		// }.start();
 	}// end-func onItemClick
 
 	@Override
@@ -122,7 +115,7 @@ public class FragmentBooks_GridView extends Fragment implements
 									view.setAlpha(1);
 								} else {
 									Log.d("delete epub book",
-											"failed FragmentBooks_ListView line 121");
+											"failed FragmentBooks_ListView line 118");
 								}
 							}
 						});

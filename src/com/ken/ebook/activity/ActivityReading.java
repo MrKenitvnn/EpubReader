@@ -36,31 +36,32 @@ import com.ken.ebook.model.EpubBook;
 import com.ken.ebook.model.EpubBookmark;
 import com.ken.ebook.model.EpubChapter;
 import com.ken.ebook.model.EpubCss;
-import com.ken.ebook.process.FileHandler;
-import com.ken.ebook.process.JsoupParse;
+import com.ken.ebook.utils.FileHandler;
+import com.ken.ebook.utils.JsoupParse;
 
 @SuppressLint({ "NewApi", "SetJavaScriptEnabled", "JavascriptInterface" })
 public class ActivityReading extends Activity {
 	public static int test = 0x0;
 	static int book_id;
-	String chapterSrc;
-	int state_show = 0x0;
-	String webData = "";
-	String script = "";
-	String script2 = "";
-	String bookData = "";
+	private int state_show = 0x0;
+	private String 
+			webData = "",
+			script = "",
+			script2 = "",
+			bookData = "";
 
-	WebView webview;
-	Button btnBookmark;
-	Button btnShowControl;
-	RelativeLayout relHoldControl;
-	EpubBookDAO bookDAO;
-	EpubBookmarkDAO bookmarkDAO;
-	static EpubChapterDAO chapterDAO;
-	static EpubCssDAO cssDAO;
-	static List<EpubChapter> listChapter;
-	static List<EpubCss> listCss;
-	EpubBookmark mBookmark;
+	private WebView webview;
+	private Button 
+			btnBookmark,
+			btnShowControl;
+	private RelativeLayout relHoldControl;
+	private EpubBookmarkDAO bookmarkDAO;
+	public 	static EpubBookDAO bookDAO;
+	private static EpubChapterDAO chapterDAO;
+	private static EpubCssDAO cssDAO;
+	private static List<EpubChapter> listChapter;
+	private static List<EpubCss> listCss;
+	private EpubBookmark mBookmark;
 
 	@SuppressLint({ "JavascriptInterface", "NewApi", "SetJavaScriptEnabled" })
 	@Override
@@ -71,36 +72,24 @@ public class ActivityReading extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_readding);
 
-		bookDAO = new EpubBookDAO(getApplicationContext());
+		bookDAO 	= new EpubBookDAO(getApplicationContext());
 		bookmarkDAO = new EpubBookmarkDAO(getApplicationContext());
-		chapterDAO = new EpubChapterDAO(getApplicationContext());
-		cssDAO = new EpubCssDAO(getApplicationContext());
+		chapterDAO 	= new EpubChapterDAO(getApplicationContext());
+		cssDAO 		= new EpubCssDAO(getApplicationContext());
 
 		// init controls
-		webview = (WebView) findViewById(R.id.webkit);
-		btnBookmark = (Button) findViewById(R.id.btnBookmark);
-		btnShowControl = (Button) findViewById(R.id.btnShowControl);
-		relHoldControl = (RelativeLayout) findViewById(R.id.relHoldControl);
+		webview			= (WebView) findViewById(R.id.webkit);
+		btnBookmark		= (Button) findViewById(R.id.btnBookmark);
+		btnShowControl	= (Button) findViewById(R.id.btnShowControl);
+		relHoldControl	= (RelativeLayout) findViewById(R.id.relHoldControl);
 
 		// event click
-		btnShowControl.setOnClickListener(viewShowControl);
-		btnBookmark.setOnClickListener(bookMark);
+		btnShowControl	.setOnClickListener(viewShowControlEvent);
+		btnBookmark		.setOnClickListener(bookMarkEvent);
 
 		new ReadTask().execute();
 
 	} // end-func onCreate
-
-	@SuppressWarnings("deprecation")
-	@Override
-	protected void onStart() {
-		super.onStart();
-
-	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-	}
 
 	@Override
 	protected void onPause() {
@@ -144,7 +133,7 @@ public class ActivityReading extends Activity {
 	}// end-func setData
 
 	// event
-	View.OnClickListener viewShowControl = new View.OnClickListener() {
+	View.OnClickListener viewShowControlEvent = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
 			switch (state_show) {
@@ -169,17 +158,19 @@ public class ActivityReading extends Activity {
 			}
 
 		}
-	};
+	};// end-event viewShowControlEvent
 
-	View.OnClickListener bookMark = new View.OnClickListener() {
+	View.OnClickListener bookMarkEvent = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
 			webview.loadUrl("javascript:getComponentId()");
 		}
-	};
+	};// end-event bookMarkEvent
 
 	// end-event
-
+	
+////////////////////////////////////////////////////////////////////////////////
+	
 	private class ReadTask extends AsyncTask<String, Long, Void> {
 		private final ProgressDialog dialog = new ProgressDialog(
 				ActivityReading.this);
@@ -194,62 +185,71 @@ public class ActivityReading extends Activity {
 		// automatically done on worker thread (separate from UI thread)
 		protected Void doInBackground(final String... args) {
 			try {
-				// Thread.sleep(1000);
-				// Nhan du lieu tu ben ben kia truyen sang
-				EpubBook book = (EpubBook) getIntent().getExtras()
-						.getSerializable("BOOK");
+				// Nhận dữ liệu truyền sang
+				EpubBook book = 
+							(EpubBook) getIntent()
+							.getExtras()
+							.getSerializable("BOOK");
 				book_id = Integer.parseInt(book.getEpubFolder());
 
 				// base data
 				listChapter = new ArrayList<EpubChapter>();
-				listChapter.addAll(chapterDAO.getListChapterByBookId(book_id));
-				listCss = new ArrayList<EpubCss>();
-				listCss.addAll(cssDAO.getListCssByBookId(book_id));
-				mBookmark = bookmarkDAO.getEpubBookmarkById(book_id);
+				listCss		= new ArrayList<EpubCss>();
+				
+				listChapter	.addAll(chapterDAO.getListChapterByBookId(book_id));
+				listCss		.addAll(cssDAO.getListCssByBookId(book_id));
+				mBookmark 	= bookmarkDAO.getEpubBookmarkById(book_id);
 
 				// đọc file script từ assets
 				script = getAsset("finalebookscript.js");
 				script2 = getAsset("finalebookscript2.js");
 
 				// book data
-				bookData = "var bookData = {" + "getComponents: function () {"
-						+ "return [";
+				bookData = "var bookData = {" 
+							+ "getComponents: function () {"
+							+ "return [";
 				int i = 0;
 				for (EpubChapter item : listChapter) {
 					bookData += "'" + item.getChapterSrc().trim() + "'";
 					bookData += i < listChapter.size() - 1 ? "," : "";
 					i++;
 				}
-				bookData += "];" + "}," + "getContents: function () {"
-						+ "return [";
+				bookData += "];" 
+							+ "}," 
+							+ "getContents: function () {"
+							+ "return [";
 				i = 0;
 				for (EpubChapter item : listChapter) {
-					bookData += "{title:\"" + item.getChapterTitle().trim()
-							+ "\",";
+					bookData += "{title:\"" + item.getChapterTitle().trim()+ "\",";
 					bookData += "src: \"" + item.getChapterSrc().trim() + "\"}";
 					bookData += i < listChapter.size() - 1 ? "," : "";
 					i++;
 				}
-				bookData += "]" + "},"
-						+ "getComponent: function (componentId) {" + "return {";
+				bookData += "]" 
+							+ "},"
+							+ "getComponent: function (componentId) {" 
+							+ "return {";
 				i = 0;
 				for (EpubChapter item : listChapter) {
 					bookData += "'" + item.getChapterSrc().trim() + "':";
 					bookData += "'"
-							+ JsoupParse
-									.getChapterComponent(item.getChapterPath())
-									.replace("\n", "").replace("<a", "<p")
-									.replace("<a>", "<p>").trim() + "'";
+							 + JsoupParse
+							 	.getChapterComponent(item.getChapterPath())
+							 	.replace("\n", "").replace("<a", "<p")
+								.replace("<a>", "<p>").trim() + "'";
 					bookData += i < listChapter.size() - 1 ? "," : "";
 
 					i++;
 				}
 
-				bookData += "}[componentId];" + "},"
-						+ "getMetaData: function(key) {" + "return {"
-						+ "title: \"" + book.getEpubBookName() + "\","
-						+ "creator: \"" + book.getEpubBookAuthor() + "\""
-						+ "}[key];" + "}" + "} " + "";
+				bookData += "}[componentId];" 
+						 + "},"
+						 + "getMetaData: function(key) {" + "return {"
+						 + "title: \"" + book.getEpubBookName() + "\","
+						 + "creator: \"" + book.getEpubBookAuthor() + "\""
+						 + "}[key];" 
+						 + "}" 
+						 + "} ";
 
 				// end book data
 
@@ -276,16 +276,18 @@ public class ActivityReading extends Activity {
 						+ "<script type=\"text/javascript\" src=\"file:///android_asset/monocore.js\"></script>"
 						+ "<script type=\"text/javascript\" src=\"file:///android_asset/monoctrl.js\"></script>"
 						+ "<script>" // script start
-						+ bookData + script;
+						+ bookData 
+						+ script;
 
 				if (mBookmark != null) {
-					webData += " var locus = {componentId: '"
-							+ mBookmark.getComponentId() + "',percent: '"
+					webData += " var locus = {componentId:'"
+							+ mBookmark.getComponentId() + "',percent:'"
 							+ mBookmark.getPercent() + "'};";
-					webData += " reader.moveTo(locus);";
+					webData += "\n reader.moveTo(locus);";
 				}
 
-				webData += script2 + " </script>" // end script
+				webData += script2 
+						+ " </script>" // end script
 						+ "</head>";
 
 				webData += "" + "<body>" + "<div id=\"readerBg\">"
@@ -296,14 +298,15 @@ public class ActivityReading extends Activity {
 						+ "<div class=\"dummyPage\"></div>"
 						+ "<div class=\"dummyPage\"></div>"
 						+ "<div class=\"dummyPage\"></div>"
-						+ "<div class=\"dummyPage\"></div>" + "</div>" + ""
+						+ "<div class=\"dummyPage\"></div>" 
+						+ "</div>"
 						+ "<div id=\"readerCntr\">"
 						+ "<div class=\"reader\" id=\"reader\"></div>"
 						+ "</div>";
 
 				webData += "<script type=\"text/javascript\" src=\"file:///android_asset/finalebookscript.js\"></script>";
-
-				webData += "</body>" + "</html>";
+				webData += "</body>" 
+						+ "</html>";
 				// ghi vào file của folder data trong sdcard
 				FileHandler.writeData(webData, "index.html");
 
@@ -312,31 +315,39 @@ public class ActivityReading extends Activity {
 			}
 			return null;
 		}
+		
+		@JavascriptInterface
+		public void setData(String componentId, String percentId) {
+			if (mBookmark != null) {
+				mBookmark	.setComponentId(componentId).setPercent(percentId);
+				bookmarkDAO	.editEpubBookmark(mBookmark);
+				Log.d("mylog edit", componentId + " - " + percentId);
+			} else {
+				mBookmark = new EpubBookmark(book_id, componentId, percentId);
+				bookmarkDAO.addEpubBookmark(mBookmark);
+				Log.d("mylog add", componentId + " - " + percentId);
+			}
+		}// end-func setData
 
-		// periodic updates - it is OK to change UI
-		@Override
-		protected void onProgressUpdate(Long... value) {
-			super.onProgressUpdate(value);
-		}
-
-		// can use UI thread here
+		// load sách vào webview
+		@SuppressWarnings("deprecation")
 		protected void onPostExecute(final Void unused) {
-			if (this.dialog.isShowing()) {
-				webview.getSettings().setJavaScriptEnabled(true);
-				webview.getSettings().setAllowFileAccessFromFileURLs(true);
-				webview.setWebViewClient(new WebViewClient());
-				webview.setWebChromeClient(new WebChromeClient());
-				webview.addJavascriptInterface(this, "android");
-				webview.requestFocusFromTouch();
-				// these settings speed up page load into the webview
-				webview.getSettings().setRenderPriority(RenderPriority.HIGH);
-				webview.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
-				webview.requestFocus(View.FOCUS_DOWN);
+			webview.getSettings().setJavaScriptEnabled(true);
+			webview.getSettings().setAllowFileAccessFromFileURLs(true);
+			webview.setWebViewClient(new WebViewClient());
+			webview.setWebChromeClient(new WebChromeClient());
+			webview.addJavascriptInterface(this, "android");
+			webview.requestFocusFromTouch();
+			// these settings speed up page load into the webview
+			webview.getSettings().setRenderPriority(RenderPriority.HIGH);
+			webview.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
+			webview.requestFocus(View.FOCUS_DOWN);
 
-				webview.loadUrl("file://" + FileHandler.rootPath
-						+ FileHandler.DATA_FOLDER + "/index.html");
+			webview.loadUrl("file://" + FileHandler.rootPath
+					+ FileHandler.DATA_FOLDER + "/index.html");
+			if (this.dialog.isShowing()) {
 				this.dialog.dismiss();
 			}
 		}
-	}// AsyncTask
+	}// end-asynctask ReadTask
 }

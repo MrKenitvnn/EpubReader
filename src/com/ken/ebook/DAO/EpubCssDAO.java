@@ -34,7 +34,7 @@ public class EpubCssDAO {
 		} finally {
 			db.close();
 		}
-	}// end-func
+	}// end-func addListCss
 
 	public List<EpubCss> getListCssByBookId(int bookId) {
 		List<EpubCss> lst = new ArrayList<EpubCss>();
@@ -48,19 +48,18 @@ public class EpubCssDAO {
 				while (!c.isAfterLast()) {
 					EpubCss chapter = new EpubCss();
 
-					chapter.setCssPath(c.getString(c
-							.getColumnIndex(Database.cssPath)));
+					chapter.setCssPath(c.getString(c.getColumnIndex(Database.cssPath)));
 
 					lst.add(chapter);
 					c.moveToNext();
-				}
-			}
+				}// end-while
+			}// end-if
 		} finally {
 			c.close();
 			db.close();
-		}
+		}// end-try
 
 		return lst;
-	}// end-func
+	}// end-func getListCssByBookId
 
 }

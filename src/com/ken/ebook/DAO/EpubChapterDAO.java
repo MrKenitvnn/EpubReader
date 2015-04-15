@@ -7,7 +7,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.provider.ContactsContract.Contacts.Data;
 
 import com.ken.ebook.model.EpubChapter;
 
@@ -36,13 +35,15 @@ public class EpubChapterDAO {
 		} finally {
 			db.close();
 		}
-	}// end-func
+	}// end-func addListChapter
 
 	public List<EpubChapter> getListChapterByBookId(int bookId) {
 		List<EpubChapter> lst = new ArrayList<EpubChapter>();
 		db = dbhelper.getReadableDatabase();
-		String sql = "SELECT * FROM " + Database.TABLE_EPUB_CHAPTER + " WHERE "
-				+ Database.epubBook_id + "=" + bookId;
+		String sql = "SELECT * FROM " 
+					+ Database.TABLE_EPUB_CHAPTER 
+					+ " WHERE "
+					+ Database.epubBook_id + "=" + bookId;
 
 		Cursor c = db.rawQuery(sql, null);
 		try {
@@ -68,5 +69,5 @@ public class EpubChapterDAO {
 		}
 
 		return lst;
-	}// end-func
+	}// end-func getListChapterByBookId
 }

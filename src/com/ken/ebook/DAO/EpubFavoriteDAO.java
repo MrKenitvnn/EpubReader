@@ -44,8 +44,9 @@ public class EpubFavoriteDAO {
 		db = dbhelper.getWritableDatabase();
 		try {
 			result = db.delete(Database.TABLE_EPUB_FAVORITE,
-					Database.epubBook_id + "=?",
-					new String[] { String.valueOf(id) });
+								Database.epubBook_id + "=?",
+								new String[] { String.valueOf(id) });
+			
 		} finally {
 			db.close();
 		}
@@ -57,13 +58,20 @@ public class EpubFavoriteDAO {
 		List<EpubBook> list = new ArrayList<EpubBook>();
 		db = dbhelper.getWritableDatabase();
 
-		String sql = "SELECT " + "b." + Database.epubBook_id + ", " + "b."
-				+ Database.epubBookName + ", " + "b." + Database.epubBookAuthor
-				+ ", " + "b." + Database.epubBookFolder + ", " + "b."
-				+ Database.epubBookCover + " FROM "
-				+ Database.TABLE_EPUB_FAVORITE + " AS a" + " LEFT JOIN "
-				+ Database.TABLE_EPUB_BOOK + " AS b " + " ON " + "a."
-				+ Database.epubBook_id + "=" + "b." + Database.epubBook_id + "";
+		String sql = "SELECT " 
+					+ "b." + Database.epubBook_id + ", " 
+					+ "b." + Database.epubBookName + ", " 
+					+ "b." + Database.epubBookAuthor + ", " 
+					+ "b." + Database.epubBookFolder + ", " 
+					+ "b." + Database.epubBookCover 
+					+ " FROM "
+					+ Database.TABLE_EPUB_FAVORITE + " AS a" 
+					+ " LEFT JOIN "
+					+ Database.TABLE_EPUB_BOOK + " AS b " 
+					+ " ON " 
+					+ "a." + Database.epubBook_id 
+					+ "=" 
+					+ "b." + Database.epubBook_id;
 
 		Cursor c = db.rawQuery(sql, null);
 		c.moveToFirst();
@@ -98,8 +106,9 @@ public class EpubFavoriteDAO {
 		List<EpubFavorite> list = new ArrayList<EpubFavorite>();
 		db = dbhelper.getWritableDatabase();
 
-		String sql = "SELECT " + Database.epubBook_id + " FROM "
-				+ Database.TABLE_EPUB_FAVORITE;
+		String sql = "SELECT " + Database.epubBook_id 
+					+ " FROM "
+					+ Database.TABLE_EPUB_FAVORITE;
 
 		Cursor c = db.rawQuery(sql, null);
 		c.moveToFirst();

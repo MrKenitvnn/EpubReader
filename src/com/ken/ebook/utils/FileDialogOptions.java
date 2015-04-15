@@ -1,4 +1,4 @@
-package com.ken.ebook.process;
+package com.ken.ebook.utils;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -9,8 +9,9 @@ import com.ken.ebook.activity.ActivityFileDialog;
 
 public class FileDialogOptions {
     // Legacy
-    private static final int SELECTION_MODE_CREATE = 0;
-    private static final int SELECTION_MODE_OPEN = 1;
+    private static final int 
+    						SELECTION_MODE_CREATE = 0,
+    						SELECTION_MODE_OPEN = 1;
 
     
     // This is used to configure the start folder when it opens and the folder of the result file.

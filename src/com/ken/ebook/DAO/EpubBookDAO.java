@@ -11,16 +11,15 @@ import android.database.sqlite.SQLiteDatabase;
 import com.ken.ebook.model.EpubBook;
 
 public class EpubBookDAO {
-	static Database dbhelper;
-	static SQLiteDatabase db;
-	Context context;
+	private static Database dbhelper;
+	private static SQLiteDatabase db;
 
 	public EpubBookDAO(Context context) {
-		this.context = context;
 		dbhelper = new Database(context);
 	}
+	
+////////////////////////////////////////////////////////////////////////////////
 
-	// start-func addEpubBook(EpubBook _epubBook)
 	public void addEpubBook(EpubBook _epubBook) {
 		db = dbhelper.getWritableDatabase();
 		ContentValues values = new ContentValues();
@@ -30,8 +29,7 @@ public class EpubBookDAO {
 			values.put(Database.epubBookCover, _epubBook.getEpubCover());
 			values.put(Database.epubBookFolder, _epubBook.getEpubFolder());
 			values.put(Database.epubBookFilePath, _epubBook.getEpubFilePath());
-			values.put(Database.epubBookContentFilePath,
-					_epubBook.getContentFilePath());
+			values.put(Database.epubBookContentFilePath, _epubBook.getContentFilePath());
 			values.put(Database.epubBookNcxFilePath, _epubBook.getNcxFilePath());
 
 			db.insert(Database.TABLE_EPUB_BOOK, null, values);
@@ -41,26 +39,6 @@ public class EpubBookDAO {
 
 	}// end-func addEpubBook
 
-	// // start-func editEpubBook(EpubBook _epubBook)
-	// public int editEpubBook(EpubBook _epubBook) {
-	// db = dbhelper.getWritableDatabase();
-	// ContentValues values = new ContentValues();
-	// values.put(Database.epubBookName, _epubBook.getEpubBookName());
-	// values.put(Database.epubBookAuthor, _epubBook.getEpubBookAuthor());
-	// values.put(Database.epubBookCover, _epubBook.getEpubCover());
-	// values.put(Database.epubBookFolder, _epubBook.getEpubFolder());
-	// values.put(Database.epubBookContentFilePath,
-	// _epubBook.getContentFilePath());
-	// values.put(Database.epubBookNcxFilePath, _epubBook.getNcxFilePath());
-	//
-	// int result = db.update(Database.TABLE_EPUB_BOOK, values,
-	// Database.epubBook_id + "=?",
-	// new String[] { String.valueOf(_epubBook.getEpubBook_id()) });
-	// return result;
-	//
-	// }// end-func editEpubBook
-
-	// start-func delEpubBook(int id)
 	public int delEpubBook(int id) {
 		int result = -1;
 		db = dbhelper.getWritableDatabase();
@@ -73,7 +51,6 @@ public class EpubBookDAO {
 		return result;
 	}// end-func delEpubBook
 
-	// start-func getEpubBookById(int id)
 	public EpubBook getEpubBookById(int id) {
 		db = dbhelper.getReadableDatabase();
 
@@ -120,7 +97,6 @@ public class EpubBookDAO {
 		return id;
 	}
 
-	// star-func getAnEpubBook
 	public int getLastId() {
 		int id = 0;
 		db = dbhelper.getWritableDatabase();
@@ -142,7 +118,6 @@ public class EpubBookDAO {
 		return id;
 	}
 
-	// star-func loadAllEpubBook
 	public List<EpubBook> loadAllEpubBook() {
 		List<EpubBook> list = new ArrayList<EpubBook>();
 		db = dbhelper.getReadableDatabase();

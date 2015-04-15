@@ -16,7 +16,6 @@ import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.ken.ebook.R;
 import com.ken.ebook.DAO.EpubFavoriteDAO;
@@ -25,31 +24,30 @@ import com.ken.ebook.model.EpubFavorite;
 
 public class FragmentFavorites_Adapter extends BaseAdapter {
 	private static class ViewHolder {
-		public ImageView imageView;
-		public TextView tvEpubBookName;
-		public TextView tvEpubBookAuthor;
-		public CheckBox cbFavorite;
+		private ImageView imageView;
+		private TextView 
+				tvEpubBookName,
+				tvEpubBookAuthor;
+		private CheckBox cbFavorite;
 	}
 
-	private Context context;
-	private List<EpubBook> mLocations;
-	private ArrayList<EpubBook> arraylist;
-	private LayoutInflater mInflater;
-	private EpubFavoriteDAO favoriteDao;
+	private LayoutInflater			mInflater;
+	private EpubFavoriteDAO			favoriteDao;
+	private List<EpubBook>			mLocations;
+	private ArrayList<EpubBook> 	arraylist;
 	private ArrayList<EpubFavorite> listFavorites;
 
 	// constructor
 	public FragmentFavorites_Adapter(Context context, List<EpubBook> locations) {
-		this.context = context;
-		mInflater = (LayoutInflater) context
-				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		this.mLocations = locations;
-		this.arraylist = new ArrayList<EpubBook>();
-		this.arraylist.addAll(locations);
-		this.favoriteDao = new EpubFavoriteDAO(context);
-		this.listFavorites = new ArrayList<EpubFavorite>();
-		this.listFavorites.addAll(favoriteDao.loadAllEpubFavorites());
-		favoriteDao.close();
+		mInflater			= (LayoutInflater) context
+												.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		this.mLocations		= locations;
+		this.arraylist		= new ArrayList<EpubBook>();
+		this.arraylist		.addAll(locations);
+		this.favoriteDao	= new EpubFavoriteDAO(context);
+		this.listFavorites	= new ArrayList<EpubFavorite>();
+		this.listFavorites	.addAll(favoriteDao.loadAllEpubFavorites());
+		favoriteDao			.close();
 		// itemChecked = new boolean[locations.size()];
 	}// end-func
 
@@ -58,7 +56,6 @@ public class FragmentFavorites_Adapter extends BaseAdapter {
 		if (mLocations != null) {
 			return mLocations.size();
 		}
-
 		return 0;
 	}
 
@@ -67,7 +64,6 @@ public class FragmentFavorites_Adapter extends BaseAdapter {
 		if (mLocations != null && position >= 0 && position < getCount()) {
 			return mLocations.get(position);
 		}
-
 		return null;
 	}
 
@@ -76,28 +72,22 @@ public class FragmentFavorites_Adapter extends BaseAdapter {
 		if (mLocations != null && position >= 0 && position < getCount()) {
 			return mLocations.get(position).getEpubBook_id();
 		}
-
 		return position;
 	}
+	
 	@Override
 	public View getView(final int position, View convertView, ViewGroup parent) {
 		View view = convertView;
 		final ViewHolder viewHolder;
 
 		if (view == null) {
-			view = mInflater.inflate(R.layout.item_fragment_favorites, parent,
-					false);
+			viewHolder	= new ViewHolder();
+			view		= mInflater.inflate(R.layout.item_fragment_favorites, parent, false);
 
-			viewHolder = new ViewHolder();
-
-			viewHolder.imageView = (ImageView) view
-					.findViewById(R.id.iv_item_list_favorites);
-			viewHolder.tvEpubBookName = (TextView) view
-					.findViewById(R.id.tvEpubBookName_favorites);
-			viewHolder.tvEpubBookAuthor = (TextView) view
-					.findViewById(R.id.tvEpubBookAuthor_favorites);
-			viewHolder.cbFavorite = (CheckBox) view
-					.findViewById(R.id.cbFavorite_favorites);
+			viewHolder.imageView 		= (ImageView) view.findViewById(R.id.iv_item_list_favorites);
+			viewHolder.tvEpubBookName 	= (TextView) view.findViewById(R.id.tvEpubBookName_favorites);
+			viewHolder.tvEpubBookAuthor = (TextView) view.findViewById(R.id.tvEpubBookAuthor_favorites);
+			viewHolder.cbFavorite		= (CheckBox) view.findViewById(R.id.cbFavorite_favorites);
 
 			view.setTag(viewHolder);
 		} else {
@@ -109,40 +99,36 @@ public class FragmentFavorites_Adapter extends BaseAdapter {
 		if (locationModel.getEpubCover() != null) { // when doesn't have cover
 			File imgFile = new File(locationModel.getEpubCover());
 			if (imgFile.exists()) {
-
-				// viewHolder.imageView.setImageBitmap(myBitmap);
-				Uri uri = Uri.fromFile(imgFile);
-				viewHolder.imageView.setImageURI(uri);
+				Uri uri		= Uri.fromFile(imgFile);
+				viewHolder	.imageView.setImageURI(uri);
 			}
 		} else {
-			Drawable myDrawable = view.getResources().getDrawable(
-					R.drawable.default_book_cover);
+			Drawable myDrawable = view
+									.getResources()
+									.getDrawable(R.drawable.default_book_cover);
 			viewHolder.imageView.setImageDrawable(myDrawable);
 		}// end-if
 
-		viewHolder.tvEpubBookName.setText(locationModel.getEpubBookName());
-		viewHolder.tvEpubBookAuthor.setText(locationModel.getEpubBookAuthor());
+		viewHolder.tvEpubBookName	.setText(locationModel.getEpubBookName());
+		viewHolder.tvEpubBookAuthor	.setText(locationModel.getEpubBookAuthor());
 
 		for (int i = 0; i < listFavorites.size(); i++) {
-			if (locationModel.getEpubBook_id() == listFavorites.get(i)
-					.getEpubBook_id()) {
+			if (locationModel.getEpubBook_id() == listFavorites.get(i).getEpubBook_id()) {
 				viewHolder.cbFavorite.setChecked(true);
-			}
-		}
+			}// end-if
+		}// end-for
 
 		viewHolder.cbFavorite.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				if (viewHolder.cbFavorite.isChecked()) {
-					// itemChecked[position] = true;
 					favoriteDao.addEpubFavorite(locationModel.getEpubBook_id());
 				} else {
-					// itemChecked[position] = false;
 					mLocations.remove(locationModel);
 					notifyDataSetChanged();
 					favoriteDao.delEpubFavorite(locationModel.getEpubBook_id());			
 				}// end-if
-			}// end-func
+			}// end-func onClick
 		});
 		return view;
 	}
@@ -160,17 +146,17 @@ public class FragmentFavorites_Adapter extends BaseAdapter {
 			mLocations.addAll(arraylist);
 		} else {
 			for (EpubBook wp : arraylist) {
-				if (wp.getEpubBookName().toLowerCase(Locale.getDefault())
-						.contains(charText)
-						|| wp.getEpubBookAuthor()
-								.toLowerCase(Locale.getDefault())
-								.contains(charText)) {
+				if (wp.getEpubBookName()
+						.toLowerCase(Locale.getDefault()).contains(charText)
+					|| wp.getEpubBookAuthor()
+							.toLowerCase(Locale.getDefault())
+							.contains(charText)) {
 					mLocations.add(wp);
-				}
-			}
-		}
+				}// end-if
+			}// end-for
+		}// end-if
 		notifyDataSetChanged();
-	}
+	}// end-func filter
 
 	public void closeSearch() {
 		// mLocations.addAll(arraylist);

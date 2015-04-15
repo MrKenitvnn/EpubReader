@@ -16,12 +16,11 @@ public class EpubBookmarkDAO {
 		dbhelper = new Database(_context);
 	}
 
-	// start-func getEpubBookmarkById(int id)
 	public EpubBookmark getEpubBookmarkById(int id) {
 		db = dbhelper.getReadableDatabase();
 
-		String sql = "select * from " + Database.TABLE_EPUB_BOOKMARK
-				+ " where " + Database.epubBook_id + " = " + id;
+		String sql = "SELECT * FROM " + Database.TABLE_EPUB_BOOKMARK
+					+ " WHERE " + Database.epubBook_id + " = " + id;
 
 		Cursor c = db.rawQuery(sql, null);
 		c.moveToFirst();
@@ -56,17 +55,15 @@ public class EpubBookmarkDAO {
 			db = dbhelper.getWritableDatabase();
 			ContentValues values = new ContentValues();
 			values.put(Database.epubBook_id, _epubBookmark.getEpubBook_id());
-			values.put(Database.bookmarkComponentId,
-					_epubBookmark.getComponentId());
+			values.put(Database.bookmarkComponentId, _epubBookmark.getComponentId());
 			values.put(Database.bookmarkPercent, _epubBookmark.getPercent());
 
 			db.insert(Database.TABLE_EPUB_BOOKMARK, null, values);
 		} finally {
 			db.close();
 		}
-	}
+	}// end-func addEpubBookmark
 
-	// start-func editEpubBookmark
 	public int editEpubBookmark(EpubBookmark _epubBookmark) {
 		int result = -1;
 		try {
@@ -76,9 +73,11 @@ public class EpubBookmarkDAO {
 			values.put(Database.bookmarkComponentId,_epubBookmark.getComponentId());
 			values.put(Database.bookmarkPercent, _epubBookmark.getPercent());
 
-			result = db.update(Database.TABLE_EPUB_BOOKMARK, values,
-					Database.epubBook_id + "=?", new String[] { String
-							.valueOf(_epubBookmark.getEpubBook_id()) });
+			result = db.update(Database.TABLE_EPUB_BOOKMARK, 
+								values,
+								Database.epubBook_id + "=?",
+								new String[] {String.valueOf(_epubBookmark.getEpubBook_id()) });
+			
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		} finally {

@@ -25,18 +25,20 @@ import com.ken.ebook.model.EpubBook;
 import com.ken.ebook.model.EpubFavorite;
 
 public class FragmentBooks extends Fragment implements OnClickListener {
-	static final int ANIMATION_DURATION = 400;
-	public static final int REQUEST_EPUB_PATH = 0x0;
-	public static final int RESULT_CODE_OK = 0x1;
-	public static final int RESULT_CODE_CANCEL = 0x2;
+	public static final int 
+						ANIMATION_DURATION = 400,
+						
+						REQUEST_EPUB_PATH = 0x0,
+						RESULT_CODE_OK = 0x1,
+						RESULT_CODE_CANCEL = 0x2;
 
-	public static String pathFileEpub = "";
-	public static EpubBookDAO bookDAO;
-	public static EpubChapterDAO chapterDAO;
-	public static EpubFavoriteDAO favoriteDao;
-	public static EpubCssDAO cssDAO;
-	public static Context context;
-	public static List<EpubBook> listEpubBook = null;
+	public static String 			pathFileEpub = "";
+	public static EpubBookDAO		bookDAO;
+	public static EpubChapterDAO	chapterDAO;
+	public static EpubFavoriteDAO	favoriteDao;
+	public static EpubCssDAO		cssDAO;
+	public static Context			context;
+	public static List<EpubBook>	listEpubBook = null;
 	public static List<EpubFavorite> listFavorites = null;
 	ActivityMain main;
 
@@ -46,25 +48,27 @@ public class FragmentBooks extends Fragment implements OnClickListener {
 		context = _context;
 	}
 
+////////////////////////////////////////////////////////////////////////////////
+// fragment life cycle
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.fragment_books, container,
 				false);
-		new LoadDataTask().execute();
+		// new LoadDataTask().execute();
 
-		// main = (ActivityMain) getActivity();
-		// main.navigationToView(new FragmentBooks_ListView());
-		//
-		// bookDAO = new EpubBookDAO(context);
-		// chapterDAO = new EpubChapterDAO(context);
-		// favoriteDao = new EpubFavoriteDAO(context);
-		// cssDAO = new EpubCssDAO(context);
-		//
-		// listEpubBook = new ArrayList<EpubBook>();
-		// listEpubBook.addAll(bookDAO.loadAllEpubBook());
-		// listFavorites = new ArrayList<EpubFavorite>();
-		// listFavorites.addAll(favoriteDao.loadAllEpubFavorites());
+		main = (ActivityMain) getActivity();
+		main .navigationToView(new FragmentBooks_ListView());
+
+		bookDAO		= new EpubBookDAO(context);
+		chapterDAO	= new EpubChapterDAO(context);
+		favoriteDao = new EpubFavoriteDAO(context);
+		cssDAO		= new EpubCssDAO(context);
+
+		listEpubBook	= new ArrayList<EpubBook>();
+		listEpubBook	.addAll(bookDAO.loadAllEpubBook());
+		listFavorites	= new ArrayList<EpubFavorite>();
+		listFavorites	.addAll(favoriteDao.loadAllEpubFavorites());
 
 		return rootView;
 	}// end-func onCreateView
@@ -81,28 +85,6 @@ public class FragmentBooks extends Fragment implements OnClickListener {
 		btnToList.setOnClickListener(this);
 
 	}// end-func onActivityCreated
-
-	@Override
-	public void onClick(View v) {
-		switch (v.getId()) {
-		case R.id.btnToGrid:
-			// main.navigationToView(new FragmentBooks_GridView());
-			// btnToGrid.setVisibility(View.GONE);
-			// btnToList.setVisibility(View.VISIBLE);
-
-			new ViewToGridTask().execute();
-			break;
-		case R.id.btnToList:
-			// main.navigationToView(new FragmentBooks_ListView());
-			// btnToList.setVisibility(View.GONE);
-			// btnToGrid.setVisibility(View.VISIBLE);
-
-			new ViewToListTask().execute();
-			break;
-		default:
-			break;
-		}
-	}
 
 	@Override
 	public void onResume() {
@@ -130,6 +112,34 @@ public class FragmentBooks extends Fragment implements OnClickListener {
 		super.onDestroy();
 	}// end-func onDestroy
 
+////////////////////////////////////////////////////////////////////////////////
+	
+
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()) {
+		case R.id.btnToGrid:
+			// main.navigationToView(new FragmentBooks_GridView());
+			// btnToGrid.setVisibility(View.GONE);
+			// btnToList.setVisibility(View.VISIBLE);
+
+			new ViewToGridTask().execute();
+			break;
+		case R.id.btnToList:
+			// main.navigationToView(new FragmentBooks_ListView());
+			// btnToList.setVisibility(View.GONE);
+			// btnToGrid.setVisibility(View.VISIBLE);
+
+			new ViewToListTask().execute();
+			break;
+		default:
+			break;
+		}
+	}
+
+
+////////////////////////////////////////////////////////////////////////////////
+	
 	boolean clickable = false;
 
 	private class ViewToListTask extends AsyncTask<Void, Void, Void> {
@@ -164,8 +174,10 @@ public class FragmentBooks extends Fragment implements OnClickListener {
 				this.dialog.dismiss();
 			}
 		}
-	}// end-class ViewToListTask
+	}// end-asynctask ViewToListTask
 
+////////////////////////////////////////////////////////////////////////////////
+	
 	private class ViewToGridTask extends AsyncTask<Void, Void, Void> {
 		private final ProgressDialog dialog = new ProgressDialog(getActivity());
 
@@ -198,39 +210,6 @@ public class FragmentBooks extends Fragment implements OnClickListener {
 				this.dialog.dismiss();
 			}
 		}
-	}// end-class ViewToGridTask
+	}// end-asynctask ViewToGridTask
 
-	private class LoadDataTask extends AsyncTask<Void, Void, Void> {
-		private final ProgressDialog dialog = new ProgressDialog(getActivity());
-
-		protected void onPreExecute() {
-			this.dialog.show();
-		}
-
-		@Override
-		protected Void doInBackground(Void... params) {
-
-			main = (ActivityMain) getActivity();
-			main.navigationToView(new FragmentBooks_ListView());
-
-			bookDAO = new EpubBookDAO(context);
-			chapterDAO = new EpubChapterDAO(context);
-			favoriteDao = new EpubFavoriteDAO(context);
-			cssDAO = new EpubCssDAO(context);
-
-			listEpubBook = new ArrayList<EpubBook>();
-			listEpubBook.addAll(bookDAO.loadAllEpubBook());
-			listFavorites = new ArrayList<EpubFavorite>();
-			listFavorites.addAll(favoriteDao.loadAllEpubFavorites());
-
-			return null;
-		}
-
-		@Override
-		protected void onPostExecute(Void result) {
-			if (this.dialog.isShowing()) {
-				this.dialog.dismiss();
-			}
-		}
-	}// end-class LoadDataTask
 }

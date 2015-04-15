@@ -22,7 +22,7 @@ import android.widget.SimpleAdapter;
 
 import com.ken.ebook.R;
 import com.ken.ebook.fragment.FragmentBooks;
-import com.ken.ebook.process.FileDialogOptions;
+import com.ken.ebook.utils.FileDialogOptions;
 
 public class ActivityFileDialog extends Activity {
 	private class LastConfiguration {

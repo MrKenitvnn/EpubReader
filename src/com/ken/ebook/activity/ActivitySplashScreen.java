@@ -10,7 +10,7 @@ import com.ken.ebook.R;
 
 public class ActivitySplashScreen extends Activity {
 	protected boolean _active = true;
-	protected int _splashTime = 5000;
+	protected int _splashTime = 3000;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -29,27 +29,26 @@ public class ActivitySplashScreen extends Activity {
 						sleep(100);
 						if (_active) {
 							waited += 100;
-						}
-					}
+						}// end-if
+					}// end-while
 				} catch (InterruptedException e) {
 					// do nothing
 				} finally {
 					finish();
-					Intent mainIntent = new Intent(ActivitySplashScreen.this,
-							ActivityMain.class);
+					Intent mainIntent	= new Intent(ActivitySplashScreen.this, ActivityMain.class);
 					ActivitySplashScreen.this.startActivity(mainIntent);
 					ActivitySplashScreen.this.finish();
-				}
-			}
+				}// end-try
+			}// end-run
 		};
 		splashTread.start();
-	}
+	}// end-func onCreate
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		if (event.getAction() == MotionEvent.ACTION_DOWN) {
 			_active = false;
-		}
+		}// end-if
 		return true;
-	}
+	}// end-func onTouchEvent
 }

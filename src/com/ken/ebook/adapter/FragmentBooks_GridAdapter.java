@@ -47,7 +47,7 @@ public class FragmentBooks_GridAdapter extends BaseAdapter {
 	public FragmentBooks_GridAdapter(Context context, List<EpubBook> locations) {
 		mInflater = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		this.mLocations = locations;
+		mLocations = locations;
 		this.arraylist = new ArrayList<EpubBook>();
 		this.arraylist.addAll(locations);
 	}

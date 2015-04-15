@@ -2,6 +2,7 @@ package com.ken.ebook.adapter;
 
 import java.util.ArrayList;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -39,11 +40,12 @@ public class NavDrawerListAdapter extends BaseAdapter {
 		return position;
 	}
 
-	@Override
+	@SuppressLint("InflateParams") @Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		if (convertView == null) {
-            LayoutInflater mInflater = (LayoutInflater)
-                    context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+            LayoutInflater mInflater = (LayoutInflater)context
+            											.getSystemService(Activity
+            																.LAYOUT_INFLATER_SERVICE);
             convertView = mInflater.inflate(R.layout.drawer_list_item, null);
         }
          

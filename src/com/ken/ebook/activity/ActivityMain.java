@@ -27,6 +27,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 import com.ken.ebook.R;
 import com.ken.ebook.DAO.Database;
@@ -38,8 +39,8 @@ import com.ken.ebook.fragment.FragmentBooks_ListView;
 import com.ken.ebook.fragment.FragmentFavorites;
 import com.ken.ebook.model.EpubBook;
 import com.ken.ebook.model.NavDrawerItem;
-import com.ken.ebook.process.EpubBookHandler;
-import com.ken.ebook.process.FileHandler;
+import com.ken.ebook.utils.EpubBookHandler;
+import com.ken.ebook.utils.FileHandler;
 
 @SuppressLint("NewApi")
 public class ActivityMain extends FragmentActivity implements
@@ -47,14 +48,12 @@ public class ActivityMain extends FragmentActivity implements
 	Database db;
 	SharedPreferences prefs = null;
 	public static int FRAGMENT_STATE = 0x0;
-	public static final int FRAGMENT_STATE_BOOKS = 0x1;
-	public static final int FRAGMENT_STATE_FAVORITES = 0x2;
-	public static final int FRAGMENT_STATE_BOOKSTORE = 0x3;
-	public static final int FRAGMENT_STATE_CONTACT = 0x4;
-	public static final int FRAGMENT_STATE_SETTING = 0x5;
-	public static final int FRAGMENT_STATE_ABOUT = 0x6;
-
-	public static String textSearch = "";
+	public static final int FRAGMENT_STATE_BOOKS = 0x1,
+							FRAGMENT_STATE_FAVORITES = 0x2,
+							FRAGMENT_STATE_BOOKSTORE = 0x3,
+							FRAGMENT_STATE_CONTACT = 0x4,
+							FRAGMENT_STATE_SETTING = 0x5,
+							FRAGMENT_STATE_ABOUT = 0x6;
 
 	private DrawerLayout mDrawerLayout;
 	private ListView mDrawerList;
@@ -74,6 +73,10 @@ public class ActivityMain extends FragmentActivity implements
 	private ArrayList<NavDrawerItem> navDrawerItems;
 	private NavDrawerListAdapter adapter;
 
+	public static String textSearch = "";
+	
+////////////////////////////////////////////////////////////////////////////////
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// actionbar color
@@ -155,12 +158,14 @@ public class ActivityMain extends FragmentActivity implements
 		db = new Database(this);
 
 	}// end-func onCreate
-
+	
+////////////////////////////////////////////////////////////////////////////////
 	private void initControls() {
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		mDrawerList = (ListView) findViewById(R.id.list_slidermenu);
 	}
 
+////////////////////////////////////////////////////////////////////////////////
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.main, menu);
@@ -172,6 +177,7 @@ public class ActivityMain extends FragmentActivity implements
 		return true;
 	}// end-func onCreateOptionMenu
 
+////////////////////////////////////////////////////////////////////////////////
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// toggle nav drawer on selecting action bar app icon/title
@@ -189,6 +195,7 @@ public class ActivityMain extends FragmentActivity implements
 		}
 	}// end-fund onOptionsItemSelected
 
+////////////////////////////////////////////////////////////////////////////////
 	@Override
 	public void onActivityResult(int requestCode, int resultCode,
 			final Intent data) {
@@ -397,6 +404,7 @@ public class ActivityMain extends FragmentActivity implements
 
 	}
 
+////////////////////////////////////////////////////////////////////////////////
 	private class AddBookTask extends AsyncTask<String, Long, EpubBook> {
 		private final ProgressDialog dialog = new ProgressDialog(
 				ActivityMain.this);
@@ -433,6 +441,11 @@ public class ActivityMain extends FragmentActivity implements
 		// can use UI thread here
 		protected void onPostExecute(final EpubBook newBook) {
 
+			if (newBook == null) {
+				Toast.makeText(ActivityMain.this, "Cuốn sách này đã tồn tại!",
+						Toast.LENGTH_SHORT).show();
+			}
+
 			Fragment fmBooks_content = getSupportFragmentManager()
 					.findFragmentById(R.id.fm_content);
 			if (fmBooks_content instanceof FragmentBooks_ListView) {
@@ -444,5 +457,5 @@ public class ActivityMain extends FragmentActivity implements
 				this.dialog.dismiss();
 			}
 		}
-	}// AddBookTask
+	}// end-asynctask AddBookTask
 }

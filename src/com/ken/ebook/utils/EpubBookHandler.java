@@ -1,8 +1,7 @@
-package com.ken.ebook.process;
+package com.ken.ebook.utils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.StringTokenizer;
 
 import android.text.TextUtils;
 import android.widget.Toast;
@@ -20,8 +19,6 @@ public class EpubBookHandler {
 		String bookFolder = String
 				.valueOf(FragmentBooks.bookDAO.getLastId() + 1);
 		EpubBook newBook = null;
-
-		// if (!TextUtils.equals(pathFileEpub, "")) { // nếu đường dẫn khác rỗng
 
 		// nếu file đúng định dạng .epub
 		if (TextUtils.equals(FileHandler.getLastTokenizer(pathFileEpub, "."),
@@ -84,7 +81,6 @@ public class EpubBookHandler {
 			Toast.makeText(FragmentBooks.context, "Đây không phải file .epub",
 					Toast.LENGTH_SHORT).show();
 		}
-		// }// end-if
 		return newBook;
 	}
 

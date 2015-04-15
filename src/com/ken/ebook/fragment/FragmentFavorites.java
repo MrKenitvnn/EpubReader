@@ -3,7 +3,6 @@ package com.ken.ebook.fragment;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -31,7 +30,7 @@ public class FragmentFavorites extends Fragment implements
 	static final int ANIMATION_DURATION = 400;
 	public static Context context;
 	private ListView lvFavorites;
-	CheckBox cbFavorite;
+	public CheckBox cbFavorite;
 
 	public static FragmentFavorites_Adapter adapter;
 	EpubFavoriteDAO favoriteDAO;
@@ -51,18 +50,18 @@ public class FragmentFavorites extends Fragment implements
 
 		// init controls
 		lvFavorites = (ListView) rootView.findViewById(R.id.lvFavorites);
-		cbFavorite = (CheckBox) getActivity().findViewById(R.id.cbFavorite);
+		cbFavorite 	= (CheckBox) getActivity().findViewById(R.id.cbFavorite);
 
-		favoriteDAO = new EpubFavoriteDAO(context);
-		bookDAO = new EpubBookDAO(context);
-		listEpubBook = new ArrayList<EpubBook>();
+		favoriteDAO		= new EpubFavoriteDAO(context);
+		bookDAO			= new EpubBookDAO(context);
+		listEpubBook	= new ArrayList<EpubBook>();
 		// load data from sql
-		listEpubBook = favoriteDAO.loadAllEpubBookFavorites();
+		listEpubBook	= favoriteDAO.loadAllEpubBookFavorites();
 
 		// adapter
-		adapter = new FragmentFavorites_Adapter(context, listEpubBook);
-		lvFavorites.setAdapter(adapter);
-		adapter.notifyDataSetChanged();
+		adapter		= new FragmentFavorites_Adapter(context, listEpubBook);
+		lvFavorites .setAdapter(adapter);
+		adapter		.notifyDataSetChanged();
 
 		// event
 		lvFavorites.setTextFilterEnabled(true);
@@ -98,7 +97,6 @@ public class FragmentFavorites extends Fragment implements
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		menu.findItem(R.id.action_add_book).setVisible(false);
 		super.onCreateOptionsMenu(menu, inflater);
-
 	}
 
 }

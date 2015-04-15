@@ -6,41 +6,45 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class Database extends SQLiteOpenHelper {
 
-	private static String DATABASE_NAME = "ebookReader";
-	private static int DATABASE_VERSION = 1;
+	private static String DATABASE_NAME		= "ebookReader";
+	private static int DATABASE_VERSION		= 1;
 
-	public static String TABLE_EPUB_BOOK = "tblEpubBook";
-	public static String epubBook_id = "epubBookId";
-	public static String epubBookName = "epubBookName";
-	public static String epubBookAuthor = "epubBookAuthor";
-	public static String epubBookCover = "epubBookCover";
-	public static String epubBookFolder = "epubBookFolder";
-	public static String epubBookFilePath = "epubBookFilePath";
-	public static String epubBookContentFilePath = "epubBookContentFilePath";
-	public static String epubBookNcxFilePath = "epubBookNcxFilePath";
+	public static String 
+					TABLE_EPUB_BOOK			= "tblEpubBook",
+					epubBook_id				= "epubBookId",
+					epubBookName			= "epubBookName",
+					epubBookAuthor			= "epubBookAuthor",
+					epubBookCover			= "epubBookCover",
+					epubBookFolder			= "epubBookFolder",
+					epubBookFilePath		= "epubBookFilePath",
+					epubBookContentFilePath = "epubBookContentFilePath",
+					epubBookNcxFilePath		= "epubBookNcxFilePath";
 
-	public static String TABLE_EPUB_BOOKMARK = "tblEpubBookmark";
-	// public static String epubBook_id = "epubBookId";
-	public static String bookmarkComponentId = "bookmarkComponentId";
-	public static String bookmarkPercent = "bookmarkPercent";
+	public static String 
+					TABLE_EPUB_BOOKMARK	= "tblEpubBookmark",
+//					epubBook_id 		= "epubBookId";
+					bookmarkComponentId = "bookmarkComponentId",
+					bookmarkPercent 	= "bookmarkPercent";
 
-	public static String TABLE_EPUB_CHAPTER = "tblEpubChapter";
-	public static String chapterId = "chapterId";
-	// public static String epubBook_id = "epubBookId";
-	public static String chapterPath = "chapterPath";
-	public static String chapterSrc = "chapterSrc";
-	public static String chapterTitle = "chapterTitle";
-	public static String chapterPlayOrder = "chapterPlayOrder";
+	public static String 
+					TABLE_EPUB_CHAPTER	= "tblEpubChapter",
+					chapterId			= "chapterId",
+//					epubBook_id			= "epubBookId",
+					chapterPath 		= "chapterPath",
+					chapterSrc			= "chapterSrc",
+					chapterTitle		= "chapterTitle",
+					chapterPlayOrder 	= "chapterPlayOrder";
 	
-	public static String TABLE_EPUB_CSS = "tblEpubCss";
-	public static String cssId = "cssId";
-	// public static String epubBook_id = "epubBookId";
-	public static String cssPath = "cssPath";	
+	public static String 
+					TABLE_EPUB_CSS 	= "tblEpubCss",
+					cssId 			= "cssId",
+//					epubBook_id 	= "epubBookId",
+					cssPath 		= "cssPath";	
 
-	public static String TABLE_EPUB_FAVORITE = "tblEpubFavorite";
-	public static String favorite_id = "favoriteId";
-
-	// public static String epubBook_id = "epubBookId";
+	public static String 
+					TABLE_EPUB_FAVORITE = "tblEpubFavorite",
+					favorite_id 		= "favoriteId";
+//					epubBook_id 		= "epubBookId";
 
 	public Database(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -49,7 +53,8 @@ public class Database extends SQLiteOpenHelper {
 
 	@Override
 	public void onCreate(SQLiteDatabase db) {
-		String tblEpubBook = " CREATE TABLE " + TABLE_EPUB_BOOK + " ( "
+		String tblEpubBook 
+				= " CREATE TABLE " + TABLE_EPUB_BOOK + " ( "
 				+ epubBook_id
 				+ " Integer primary key autoincrement, "
 				+ epubBookName
@@ -68,7 +73,8 @@ public class Database extends SQLiteOpenHelper {
 				+ " text "
 				+ ")";
 		
-		String tblBookmark = " CREATE TABLE " + TABLE_EPUB_BOOKMARK + " ( "
+		String tblBookmark
+				= " CREATE TABLE " + TABLE_EPUB_BOOKMARK + " ( "
 				+ epubBook_id
 				+ " Integer primary key, "
 				+ bookmarkComponentId
@@ -77,7 +83,8 @@ public class Database extends SQLiteOpenHelper {
 				+ " text "
 				+ ")";
 		
-		String tblChapter = " CREATE TABLE " + TABLE_EPUB_CHAPTER + " ( "
+		String tblChapter 
+				= " CREATE TABLE " + TABLE_EPUB_CHAPTER + " ( "
 				+ chapterId
 				+ " Integer primary key autoincrement, "
 				+ epubBook_id
@@ -91,7 +98,8 @@ public class Database extends SQLiteOpenHelper {
 				+ chapterPlayOrder
 				+ " integer "		
 				+ ")";
-		String tblCss = " CREATE TABLE " + TABLE_EPUB_CSS + " ( "
+		String tblCss 
+				= " CREATE TABLE " + TABLE_EPUB_CSS + " ( "
 				+ cssId
 				+ " Integer primary key autoincrement, "
 				+ epubBook_id
@@ -101,7 +109,8 @@ public class Database extends SQLiteOpenHelper {
 				+" ) ";
 				
 		
-		String tblFavorite = " CREATE TABLE " + TABLE_EPUB_FAVORITE + " ( "
+		String tblFavorite 
+				= " CREATE TABLE " + TABLE_EPUB_FAVORITE + " ( "
 				+ favorite_id
 				+ " Integer primary key autoincrement, "
 				+ epubBook_id

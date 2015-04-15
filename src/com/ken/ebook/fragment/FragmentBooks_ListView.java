@@ -7,7 +7,6 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -25,7 +24,7 @@ import com.ken.ebook.activity.ActivityMain;
 import com.ken.ebook.activity.ActivityReading;
 import com.ken.ebook.adapter.FragmentBooks_ListAdapter;
 import com.ken.ebook.model.EpubBook;
-import com.ken.ebook.process.FileHandler;
+import com.ken.ebook.utils.FileHandler;
 
 public class FragmentBooks_ListView extends Fragment implements
 		OnItemLongClickListener, OnItemClickListener {
